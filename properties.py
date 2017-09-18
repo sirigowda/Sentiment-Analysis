@@ -6,4 +6,8 @@ consumer_secret = "#ENTER YOUR CONSUMER SECRET#"
 
 input_file_path= 'collectTweets.csv'
 
+training_data='/twitterdata/train.csv'
+test_data='/twitterdata/test.csv'
+np_test_results='/twitterdata/np_results.csv'
+
 keywords =["losangeles", "newyork"]
