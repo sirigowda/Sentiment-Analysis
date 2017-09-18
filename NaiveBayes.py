@@ -4,7 +4,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfTransformer
 import properties
 
-## Training set contains 500000 positive, negative and neutral tweets each (total 1500000 tweets)
+# Training set contains 500000 positive, negative and neutral tweets each (total 1500000 tweets)
 f = pd.read_csv( properties.training_data, sep=',', names=['text','sentiment'], dtype=str)
 print f.head()
 
@@ -23,7 +23,7 @@ tfidf_transformer = TfidfTransformer().fit(text_bow)
 
 text_tfidf = tfidf_transformer.transform(text_bow)
 
-# test file contains the test test of 498 tweets
+# Test file contains the test set of 498 tweets
 tweets = pd.read_csv( properties.test_data, sep=',', names=['Text'], dtype=str)
 classifier_nb = MultinomialNB(class_prior=None).fit(text_tfidf, f['sentiment'])
 
