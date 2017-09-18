@@ -7,13 +7,8 @@ input_file_path = 'collectTweets.csv'
 
 training_data = '/twitterdata/train.csv'
 test_data = '/twitterdata/test.csv'
-<<<<<<< HEAD
+
 naivebayes_results = '/twitterdata/naivebayes_results.csv'
 onevsrest_results = '/twitterdata/onevsrest_results.csv'
 
 keywords = ["losangeles", "newyork"]
-=======
-np_test_results = '/twitterdata/np_results.csv'
-
-keywords = [ "losangeles" , "newyork" ]
->>>>>>> d954126ba461d60c680891fc88577f85adc919df
