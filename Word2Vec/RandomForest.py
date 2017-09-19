@@ -14,4 +14,4 @@ def classify_tweets(X_train, y_train, X_test):
 
     # Write the test results to output file
     output = pd.DataFrame( data={"text":X_test["Text"][0], "sentiment": result} )
-    output.to_csv(externalproperties.RF_OUTPUT_FILE_PATH)
+    return output
