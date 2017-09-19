@@ -1,2 +1,2 @@
 INPUT_FILE_PATH='input.txt'
-OUTPUT_FILE_PATH='output.txt'
+RF_OUTPUT_FILE_PATH='rf_output.txt'
