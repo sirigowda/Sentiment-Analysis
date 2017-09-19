@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.feature_extraction.text import TfidfTransformer
-import properties
+import externalproperties
 
 # Splits tweet into lemmas
 def split_into_lemmas(tweet):
@@ -45,17 +45,17 @@ def naive_bayes_classify(f, tweets):
 
 def main():
     # Training set contains 500000 positive, negative and neutral tweets each (total 1500000 tweets)
-    f = pd.read_csv(properties.training_data, sep=',', names=['text', 'sentiment'], dtype=str)
+    f = pd.read_csv(externalproperties.training_data, sep=',', names=['text', 'sentiment'], dtype=str)
     print f.head()
 
     # Test file contains the test set of 498 tweets
-    tweets = pd.read_csv(properties.test_data, sep=',', names=['Text'], dtype=str)
+    tweets = pd.read_csv(externalproperties.test_data, sep=',', names=['Text'], dtype=str)
 
     # Train the classifier and classify data
     sentiments = naive_bayes_classify(f, tweets)
 
     # Write the results to np_test_results file
-    sentiments.to_csv(properties.np_test_results, encoding='utf-8')
+    sentiments.to_csv(externalproperties.np_test_results, encoding='utf-8')
 
 if __name__ == "__main__":
     main()
