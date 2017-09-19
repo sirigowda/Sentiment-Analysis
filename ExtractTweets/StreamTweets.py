@@ -1,16 +1,11 @@
 import re
 import tweepy
-import json
-import pandas as pd
 from tweepy import OAuthHandler
-import dataset
 import csv
 import properties
 
 
 class StreamListener(tweepy.StreamListener):
-
-
     def on_status(self, status):
 
         # Filter out retweets
@@ -60,14 +55,11 @@ class TwitterClient(object):
 
 
 def main():
-
     api = TwitterClient()
     stream_listener = StreamListener()
     stream = tweepy.Stream(auth=api.auth, listener=stream_listener)
-    stream.filter(track = properties.keywords)
+    stream.filter(track=properties.keywords)
 
 
 if __name__ == "__main__":
     main()
-
-
