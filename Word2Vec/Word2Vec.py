@@ -1,60 +1,100 @@
-from nltk.corpus import stopwords
-# Import various modules for string cleaning
-from bs4 import BeautifulSoup
-import re
-import pandas as pd
+import numpy as np
 import externalproperties
+import pandas as pd
+import Word2Vec
+from gensim.models import word2vec
+# Import the built-in logging module and configure it so that Word2Vec
+# creates nice output messages
+import logging
+import consts
+import RandomForest
 
-# Define a function to split a tweet into parsed sentences
-def tweet_to_sentences(tweet, tokenizer, remove_stopwords=False):
-    # Function to split a tweet into parsed sentences. Returns a
-    # list of sentences, where each sentence is a list of words
+
+def makeFeatureVec(words, model, num_features):
+    # Function to average all of the word vectors in a given
+    # paragraph
+
+    # Pre-initialize an empty numpy array (for speed)
+    featureVec = np.zeros((num_features,), dtype="float32")
+    nwords = 0.
+    # Index2word is a list that contains the names of the words in
+    # the model's vocabulary. Convert it to a set, for speed
+    index2word_set = set(model.wv.index2word)
+
+    # Loop over each word in the tweet and, if it is in the model's
+    # vocaublary, add its feature vector to the total
+    for word in words:
+        if word in index2word_set:
+            nwords = nwords + 1.
+            featureVec = np.add(featureVec, model[word])
+
+    # Divide the result by the number of words to get the average
+    featureVec = np.divide(featureVec, nwords)
+    return featureVec
+
+
+def getAvgFeatureVecs(tweets, model, num_features):
+    # Given a set of tweets (each one a list of words), calculate
+    # the average feature vector for each one and return a 2D numpy array
     #
-    # 1. Use the NLTK tokenizer to split the paragraph into sentences
-    raw_sentences = tokenizer.tokenize(tweet.strip())
-    #
-    # 2. Loop over each sentence
-    sentences = []
-    for raw_sentence in raw_sentences:
-        # If a sentence is empty, skip it
-        if len(raw_sentence) > 0:
-            # Otherwise, call tweet_to_wordlist to get a list of words
-            sentences.append(tweet_to_wordlist(raw_sentence,
-                                                remove_stopwords))
-    #
-    # Return the list of sentences (each sentence is a list of words,
-    # so this returns a list of lists
-    return sentences
+    # Initialize a counter
+    counter = 0.
+
+    # Preallocate a 2D numpy array, for speed
+    tweetFeatureVecs = np.zeros((len(tweets), num_features), dtype="float32")
+
+    # Loop through the tweets
+    for tweet in tweets:
+        if counter % 10000. == 0.:
+            print "Review %d of %d" % (counter, len(tweets))
+        tweetFeatureVecs[counter] = makeFeatureVec(tweet, model,
+                                                    num_features)
+        counter = counter + 1.
+    return tweetFeatureVecs
 
 
-def tweet_to_wordlist(tweet, remove_stopwords=False):
-    # tweet_text = BeautifulSoup(tweet).get_text()
-    tweet_text = re.sub("[^a-zA-Z]", " ", tweet)
-    words = tweet_text.lower().split()
-    if remove_stopwords:
-        stops = set(stopwords.words("english"))
-        words = [w for w in words if not w in stops]
-    return (words)
+def train_word2Vec_model(sentences):
+    # Initialize and train the model (this will take some time)
+    print "Training model..."
+    model = word2vec.Word2Vec(sentences, workers=consts.num_workers,
+                              size=consts.num_features, min_count=consts.min_word_count,
+                              window=consts.context, sample=consts.downsampling)
+    # If you don't plan to train the model any further, calling
+    # init_sims will make the model much more memory-efficient.
+    model.init_sims(replace=True)
+    # It can be helpful to create a meaningful model name and
+    # save the model for later use. You can load it later using Word2Vec.load()
+    model_name = "300features_40minwords_10context"
+    model.save(model_name)
+    return model
 
 
-def clean_parse_tweets(remove_stopwords):
+def main():
+    clean_train_tweets = []
+    clean_test_tweets = []
+    remove_stopwords = False
+
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
+                        level=logging.INFO)
+
     train = pd.read_csv(externalproperties.TRAIN_DATA_PATH, sep=',',
                         names=['Sentiment', 'Number', 'Date', 'Query', 'Name', 'Text'], dtype=str)
-    print train.columns.values
-    num_tweets = train["Text"].size
-    clean_train_tweets = []
-
-    print "Cleaning and parsing the training set..."
-    for i in xrange(0, num_tweets):
-        if ((i + 1) % 1000 == 0):
-            print "Review %d of %d\n" % (i + 1, num_tweets)
-        clean_train_tweets.append(tweet_to_wordlist(train["Text"][i]))
-
-    # Initialize an empty list of sentences
-    sentences = []
-
-    print "Parsing sentences from training set..."
     for tweet in train["Text"]:
-        sentences.append(tweet_to_wordlist(tweet,
-                                            remove_stopwords))
-    return sentences
+        clean_train_tweets.append(Word2Vec.tweet_to_wordlist(tweet, remove_stopwords=True))
+    sentences = Word2Vec.clean_parse_tweets(remove_stopwords)
+    model = train_word2Vec_model(sentences)
+    trainDataVecs = getAvgFeatureVecs(clean_train_tweets, model, consts.num_features)
+
+    test = pd.read_csv(externalproperties.TEST_DATA_PATH, sep=',',
+                       names=['Sentiment', 'Number', 'Date', 'Query', 'Name', 'Text'], dtype=str)
+    print "Creating average feature vecs for test tweets"
+    for tweet in test["Text"]:
+        clean_test_tweets.append(Word2Vec.tweet_to_wordlist(tweet, remove_stopwords=True))
+    testDataVecs = getAvgFeatureVecs(clean_test_tweets, model, consts.num_features)
+
+    results = RandomForest.classify_tweets(trainDataVecs, train["Sentiment"], testDataVecs)
+    results.to_csv(externalproperties.RF_OUTPUT_FILE_PATH)
+
+
+if __name__ == "__main__":
+    main()
