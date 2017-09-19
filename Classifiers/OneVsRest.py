@@ -1,5 +1,5 @@
 # Sentiment Analysis using OneVsRestClassifier
-import properties
+import externalproperties
 import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer
@@ -33,20 +33,20 @@ def onevsrest_classify(X_train, y_train, X_test):
 
 def main():
     # Training set contains 500000 positive, negative and neutral tweets each (total 1500000 tweets)
-    f = pd.read_csv(properties.training_data, sep=',', names=['Sentiment', 'Number', 'Date', 'Query', 'Name', 'Text'],
+    f = pd.read_csv(externalproperties.training_data, sep=',', names=['Sentiment', 'Number', 'Date', 'Query', 'Name', 'Text'],
                     dtype=str)
     X_train = f['Text']
     y_train = f['Sentiment']
 
     # Test file contains the test set of 498 tweets
-    tweets = pd.read_csv(properties.test_data, sep=',', names=['Text'], dtype=str)
+    tweets = pd.read_csv(externalproperties.test_data, sep=',', names=['Text'], dtype=str)
     X_test = tweets['Text']
 
     # Train the classifier and classify data
     sentiments = onevsrest_classify(X_train, y_train, X_test)
 
     # Write the results to onevsrest_results file
-    sentiments.to_csv(properties.onevsrest_results, encoding='utf-8')
+    sentiments.to_csv(externalproperties.onevsrest_results, encoding='utf-8')
 
 if __name__ == "__main__":
     main()
