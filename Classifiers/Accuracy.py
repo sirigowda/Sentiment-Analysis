@@ -1,6 +1,6 @@
 # Find the Accuracy, Specificity, Sensitivity and Confusion matrix of the results
 import pandas as pd
-import properties
+import externalproperties
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 
@@ -23,7 +23,7 @@ def find_accuracy(y_pred, y_true):
 
 def main():
     # Append the actual results in the test set and corresponding tweets with the predicted results to calculate accuracy
-    measures = pd.read_csv(properties.naivebayes_results, sep=',',
+    measures = pd.read_csv(externalproperties.naivebayes_results, sep=',',
                            names=['SlNo', 'Text', 'Calc_sentiment', 'Prob', 'Act_sentiment', 'Text_r'], dtype=str)
 
     y_pred = measures['Calc_sentiment']
