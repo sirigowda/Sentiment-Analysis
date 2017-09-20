@@ -3,8 +3,6 @@ import externalproperties
 import pandas as pd
 import Word2Vec
 from gensim.models import word2vec
-# Import the built-in logging module and configure it so that Word2Vec
-# creates nice output messages
 import logging
 import consts
 import RandomForest
