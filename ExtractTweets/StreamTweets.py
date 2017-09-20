@@ -34,7 +34,7 @@ class StreamListener(tweepy.StreamListener):
         retweets = status.retweet_count
         hashtags = [word for word in text.split() if word[0] == "#"]
         print textnopunct
-        csvFile = open(properties.input_file_path, 'a')
+        csvFile = open(properties.outut_file_path, 'a')
         csvWriter = csv.writer(csvFile)
         csvWriter.writerow([id_str, name, followers, description, textnopunct, retweets, hashtags])
 
