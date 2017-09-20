@@ -1,5 +1,4 @@
 from nltk.corpus import stopwords
-# Import various modules for string cleaning
 from bs4 import BeautifulSoup
 import re
 import pandas as pd
