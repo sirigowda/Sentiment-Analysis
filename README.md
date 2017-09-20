@@ -2,7 +2,7 @@
 
 ### ABOUT THE CODE
 
-##### EXTRACT TWEETS 
+#### EXTRACT TWEETS 
 
 Extract tweets folder contains the StreamTweets.py file using which we can extract tweets from Twitter's Streaming API. StreamTweets.py uses **tweepy**, a Python library to access Twitter, which must be downloaded. The pip command to install it is `pip install tweepy` 
 
@@ -10,7 +10,7 @@ Tweets are extracted based on specified keywords, which can be added in the prop
 
 Running **StreamTweets.py** will extract tweets containing the keywords specified.
 
-##### CLASSIFIERS
+#### CLASSIFIERS
 
 The Naive Bayes and the OneVsRest classifiers can be found in this folder. Python libraries **pandas** and **sklearn** need to be installed to run these programs. 
 
@@ -21,7 +21,7 @@ The input and output file paths need to be set in the external properties folder
 
 To determine the accuracy, error rate, confusion matrix, sensitivity and specificity, run **Accuracy.py** on the results.
 
-##### WORD2VEC 
+#### WORD2VEC 
 
 The Word2Vec neural network draws relationships between words upon training and is used with the Random Forest algorithm to classify tweets.
 
