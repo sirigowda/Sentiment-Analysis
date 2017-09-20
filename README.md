@@ -27,7 +27,7 @@ The Word2Vec neural network draws relationships between words upon training and 
 
 Python libraries **pandas**, **word2vec** and **sklearn** need to be installed to run these programs.
 
-**Word2Vec.py** calls ParseTweets.py to convert tweets to word lists and parses them. It then trains the Word2Vec model and obtains the average feature vecor for each of the tweets. **RandomForest.py** is called internally, it trains the model using these vectors and classifies tweets. 
+**Word2Vec.py** calls **ParseTweets.py** to convert tweets to word lists and parses them. It then trains the Word2Vec model and obtains the average feature vecor for each of the tweets. **RandomForest.py** is called internally, it trains the model using these vectors and classifies tweets. 
 
 The accuracy, error rate and other metrics can be determined by running the **Accuracy.py** program.
 
